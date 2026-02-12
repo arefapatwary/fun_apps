@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Valentine?</title>
+  <title>Valentine Typhoon?</title>
   <style>
     :root { --bg1:#ffeff6; --bg2:#ffe3ef; --card:#ffffffcc; --text:#1f1f1f; }
     * { box-sizing: border-box; }
@@ -68,16 +68,16 @@
       flex-wrap: wrap;
       margin-top: 8px;
       position: relative;
-      min-height: 60px;
+      min-height: 72px;
     }
 
     button {
       border: 0;
       padding: 12px 18px;
       border-radius: 999px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      transition: transform .08s ease, box-shadow .12s ease;
+      transition: transform .08s ease, box-shadow .12s ease, opacity .12s ease;
       user-select: none;
       touch-action: manipulation;
     }
@@ -95,14 +95,15 @@
       color: #ff2f74;
       border: 2px solid #ff91b8;
       box-shadow: 0 10px 18px rgba(255, 145, 184, .18);
-      position: relative; /* will become absolute once it starts moving */
+      position: relative; /* becomes absolute when initialized */
     }
 
     .result {
       margin-top: 16px;
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 900;
       min-height: 28px;
+      white-space: pre-line;
     }
 
     .hint {
@@ -111,24 +112,25 @@
       opacity: .65;
     }
 
-    /* Floating hearts */
-    .heart {
+    /* Floating emojis (hearts + flowers) */
+    .pop {
       position: fixed;
       left: 0; top: 0;
       pointer-events: none;
       will-change: transform, opacity;
-      font-size: 18px;
+      font-size: 20px;
       opacity: 0;
-      animation: floatUp 1200ms ease-out forwards;
+      animation: floatUp 1300ms ease-out forwards;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,.08));
     }
+
     @keyframes floatUp {
       0%   { transform: translate(var(--x), var(--y)) scale(.9) rotate(0deg); opacity: 0; }
       15%  { opacity: 1; }
-      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) - 140px)) scale(1.25) rotate(var(--r)); opacity: 0; }
+      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) - 160px)) scale(1.3) rotate(var(--r)); opacity: 0; }
     }
 
-    /* Confetti-ish sparkle */
+    /* Confetti sparkle dots */
     .spark {
       position: fixed;
       pointer-events: none;
@@ -136,7 +138,7 @@
       border-radius: 50%;
       background: #ff4d8d;
       opacity: 0;
-      animation: pop 700ms ease-out forwards;
+      animation: pop 750ms ease-out forwards;
     }
     @keyframes pop {
       0%   { transform: translate(var(--x), var(--y)) scale(0.6); opacity: 0; }
@@ -147,7 +149,7 @@
 </head>
 <body>
   <main class="card" id="card">
-    <h1>Will you be my valentine — and when? 💘</h1>
+    <h1>Will you be my Valentine Typhoon? 💘</h1>
     <p class="sub">Pick a date/time (optional), then choose wisely 🙂</p>
 
     <div class="when">
@@ -161,7 +163,7 @@
     </div>
 
     <div class="result" id="result"></div>
-    <div class="hint" id="hint">Tip: the “NO” button is… not very cooperative.</div>
+    <div class="hint" id="hint">Tip: the “NO” button is… extremely uncooperative.</div>
   </main>
 
   <script>
@@ -171,38 +173,39 @@
     const whenInput = document.getElementById('whenInput');
     const btnrow = document.getElementById('btnrow');
 
-    // --- YES behavior ---
-    function spawnHeartsBurst() {
-      const emojis = ["💖","💘","💗","💞","💕","❤️"];
-      const bursts = 22;
+    // --- YES behavior (hearts + flowers) ---
+    function spawnLoveBurst() {
+      const emojis = ["💖","💘","💗","💞","💕","❤️","🌹","🌷","💐","🌸","🌺","🪷"];
+      const pops = 30;
 
-      for (let i = 0; i < bursts; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      for (let i = 0; i < pops; i++) {
+        const el = document.createElement('div');
+        el.className = 'pop';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
         const x = Math.random() * window.innerWidth;
         const y = Math.random() * window.innerHeight;
-        const dx = (Math.random() * 160 - 80) + "px";
-        const r = (Math.random() * 80 - 40) + "deg";
 
-        heart.style.setProperty('--x', x + 'px');
-        heart.style.setProperty('--y', y + 'px');
-        heart.style.setProperty('--dx', dx);
-        heart.style.setProperty('--r', r);
+        const dx = (Math.random() * 200 - 100) + "px";
+        const r  = (Math.random() * 90 - 45) + "deg";
 
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 1400);
+        el.style.setProperty('--x', x + 'px');
+        el.style.setProperty('--y', y + 'px');
+        el.style.setProperty('--dx', dx);
+        el.style.setProperty('--r', r);
+
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1500);
       }
 
-      // little sparkles too
-      for (let i = 0; i < 18; i++) {
+      // sparkles
+      for (let i = 0; i < 22; i++) {
         const s = document.createElement('div');
         s.className = 'spark';
         const x = Math.random() * window.innerWidth;
         const y = Math.random() * window.innerHeight;
-        const dx = (Math.random() * 220 - 110) + "px";
-        const dy = (Math.random() * 220 - 110) + "px";
+        const dx = (Math.random() * 260 - 130) + "px";
+        const dy = (Math.random() * 260 - 130) + "px";
         s.style.setProperty('--x', x + 'px');
         s.style.setProperty('--y', y + 'px');
         s.style.setProperty('--dx', dx);
@@ -215,10 +218,10 @@
     yesBtn.addEventListener('click', () => {
       const when = whenInput.value ? new Date(whenInput.value) : null;
       const whenText = when ? `\nWhen: ${when.toLocaleString()}` : '';
-      result.textContent = `Best decision ever 💖${whenText}`;
-      spawnHeartsBurst();
+      result.textContent = `Best decision ever, I love you <3${whenText}`;
+      spawnLoveBurst();
 
-      // disable buttons after yes for a clean “final state”
+      // lock final state
       yesBtn.disabled = true;
       noBtn.disabled = true;
       yesBtn.style.opacity = 0.9;
@@ -226,30 +229,34 @@
       noBtn.style.cursor = 'default';
     });
 
-    // --- NO behavior (dodges attempts) ---
-    let noInitialized = false;
+    // --- NO behavior (never clickable, teleports farther forever) ---
     let dodgeCount = 0;
+    let noInitialized = false;
 
-    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
 
     function initNoAbsolutePosition() {
       if (noInitialized) return;
 
-      // lock it into absolute positioning within the btnrow area
       const rowRect = btnrow.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
 
       noBtn.style.position = 'absolute';
       noBtn.style.left = (btnRect.left - rowRect.left) + 'px';
-      noBtn.style.top = (btnRect.top - rowRect.top) + 'px';
+      noBtn.style.top  = (btnRect.top  - rowRect.top) + 'px';
 
-      // give the row enough height for movement
-      btnrow.style.height = Math.max(80, rowRect.height) + 'px';
+      // give it more room to run
+      btnrow.style.height = Math.max(140, rowRect.height + 90) + 'px';
+
+      // make it impossible to “accidentally” click on mobile
+      noBtn.style.pointerEvents = 'auto';
 
       noInitialized = true;
     }
 
-    function moveNoButtonAway(pointerEvent) {
+    function teleportNoButton() {
       if (noBtn.disabled) return;
 
       initNoAbsolutePosition();
@@ -258,56 +265,45 @@
       const rowRect = btnrow.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
 
-      // Make it progressively more chaotic
-      const padding = 8;
-      const maxX = rowRect.width - btnRect.width - padding;
+      const padding = 10;
+      const maxX = rowRect.width  - btnRect.width  - padding;
       const maxY = rowRect.height - btnRect.height - padding;
 
-      // If the container is too small (mobile), expand it a bit
-      if (maxX < 40 || maxY < 10) {
-        btnrow.style.height = (rowRect.height + 60) + 'px';
-      }
+      // increase jump distance each time
+      const jump = clamp(80 + dodgeCount * 35, 80, 520);
 
-      const speedBoost = clamp(1 + dodgeCount * 0.07, 1, 2.2);
+      // base random location
+      let x = Math.random() * maxX;
+      let y = Math.random() * maxY;
 
-      // Prefer moving away from the pointer if we have one
-      let targetX = Math.random() * maxX;
-      let targetY = Math.random() * maxY;
+      // add extra jump offset
+      x = clamp(x + (Math.random() * jump - jump / 2), padding, maxX);
+      y = clamp(y + (Math.random() * jump - jump / 2), padding, maxY);
 
-      if (pointerEvent) {
-        const px = pointerEvent.clientX;
-        const py = pointerEvent.clientY;
-        const currentCenterX = btnRect.left + btnRect.width / 2;
-        const currentCenterY = btnRect.top + btnRect.height / 2;
+      // super quick teleport
+      noBtn.style.transition = "left 70ms linear, top 70ms linear, transform 80ms ease";
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
 
-        const awayX = (currentCenterX - px) * 0.8;
-        const awayY = (currentCenterY - py) * 0.8;
-
-        const currentLeft = parseFloat(noBtn.style.left) || 0;
-        const currentTop  = parseFloat(noBtn.style.top) || 0;
-
-        targetX = clamp(currentLeft + awayX * speedBoost, padding, maxX);
-        targetY = clamp(currentTop  + awayY * speedBoost, padding, maxY);
-      }
-
-      noBtn.style.transition = `left ${140 / speedBoost}ms ease, top ${140 / speedBoost}ms ease`;
-      noBtn.style.left = targetX + 'px';
-      noBtn.style.top  = targetY + 'px';
+      // shrink a bit each dodge
+      const scale = clamp(1 - dodgeCount * 0.035, 0.35, 1);
+      noBtn.style.transform = `scale(${scale})`;
     }
 
-    // Trigger on hover, focus, and touch attempts
-    noBtn.addEventListener('mouseenter', (e) => moveNoButtonAway(e));
-    noBtn.addEventListener('focus', (e) => moveNoButtonAway(e));
-    noBtn.addEventListener('pointerdown', (e) => {
-      // prevent accidental click on mobile
+    // The key trick: move BEFORE a click can happen
+    noBtn.addEventListener("mouseenter", teleportNoButton);
+    noBtn.addEventListener("focus", teleportNoButton);
+
+    // pointerdown fires before click (mobile + desktop)
+    noBtn.addEventListener("pointerdown", (e) => {
       e.preventDefault();
-      moveNoButtonAway(e);
+      teleportNoButton();
     });
 
-    // If someone somehow clicks it, still dodge
-    noBtn.addEventListener('click', (e) => {
+    // just in case: also prevent clicks
+    noBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      moveNoButtonAway(e);
+      teleportNoButton();
     });
   </script>
 </body>
