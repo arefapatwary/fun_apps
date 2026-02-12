@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine?</title>
+  <style>
+    :root { --bg1:#ffeff6; --bg2:#ffe3ef; --card:#ffffffcc; --text:#1f1f1f; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, var(--bg2), transparent 60%),
+                  radial-gradient(1000px 650px at 80% 90%, #ffd1e7, transparent 55%),
+                  linear-gradient(135deg, var(--bg1), #fff);
+      overflow: hidden;
+    }
+
+    .card {
+      width: min(520px, 92vw);
+      padding: 28px 22px;
+      background: var(--card);
+      border: 1px solid #ffd0e3;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+      text-align: center;
+      backdrop-filter: blur(8px);
+      position: relative;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(22px, 4.2vw, 30px);
+      line-height: 1.15;
+    }
+
+    .sub {
+      margin: 0 0 16px;
+      opacity: .8;
+      font-size: 14px;
+    }
+
+    .when {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0 18px;
+      justify-items: center;
+    }
+    .when label { font-size: 13px; opacity: .85; }
+    input[type="datetime-local"]{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #f3b6cf;
+      outline: none;
+      width: min(320px, 80vw);
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .btnrow {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      position: relative;
+      min-height: 60px;
+    }
+
+    button {
+      border: 0;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .12s ease;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    button:active { transform: scale(.98); }
+
+    #yesBtn {
+      background: linear-gradient(180deg, #ff4d8d, #ff2f74);
+      color: white;
+      box-shadow: 0 10px 18px rgba(255, 47, 116, .28);
+    }
+    #yesBtn:hover { box-shadow: 0 14px 22px rgba(255, 47, 116, .35); }
+
+    #noBtn {
+      background: #ffffff;
+      color: #ff2f74;
+      border: 2px solid #ff91b8;
+      box-shadow: 0 10px 18px rgba(255, 145, 184, .18);
+      position: relative; /* will become absolute once it starts moving */
+    }
+
+    .result {
+      margin-top: 16px;
+      font-size: 18px;
+      font-weight: 800;
+      min-height: 28px;
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      opacity: .65;
+    }
+
+    /* Floating hearts */
+    .heart {
+      position: fixed;
+      left: 0; top: 0;
+      pointer-events: none;
+      will-change: transform, opacity;
+      font-size: 18px;
+      opacity: 0;
+      animation: floatUp 1200ms ease-out forwards;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,.08));
+    }
+    @keyframes floatUp {
+      0%   { transform: translate(var(--x), var(--y)) scale(.9) rotate(0deg); opacity: 0; }
+      15%  { opacity: 1; }
+      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) - 140px)) scale(1.25) rotate(var(--r)); opacity: 0; }
+    }
+
+    /* Confetti-ish sparkle */
+    .spark {
+      position: fixed;
+      pointer-events: none;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #ff4d8d;
+      opacity: 0;
+      animation: pop 700ms ease-out forwards;
+    }
+    @keyframes pop {
+      0%   { transform: translate(var(--x), var(--y)) scale(0.6); opacity: 0; }
+      20%  { opacity: 1; }
+      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) + var(--dy))) scale(0.1); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" id="card">
+    <h1>Will you be my valentine — and when? 💘</h1>
+    <p class="sub">Pick a date/time (optional), then choose wisely 🙂</p>
+
+    <div class="when">
+      <label for="whenInput">When are you free?</label>
+      <input id="whenInput" type="datetime-local" />
+    </div>
+
+    <div class="btnrow" id="btnrow">
+      <button id="yesBtn">YES 💖</button>
+      <button id="noBtn" aria-label="No">NO 🙃</button>
+    </div>
+
+    <div class="result" id="result"></div>
+    <div class="hint" id="hint">Tip: the “NO” button is… not very cooperative.</div>
+  </main>
+
+  <script>
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const result = document.getElementById('result');
+    const whenInput = document.getElementById('whenInput');
+    const btnrow = document.getElementById('btnrow');
+
+    // --- YES behavior ---
+    function spawnHeartsBurst() {
+      const emojis = ["💖","💘","💗","💞","💕","❤️"];
+      const bursts = 22;
+
+      for (let i = 0; i < bursts; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        const dx = (Math.random() * 160 - 80) + "px";
+        const r = (Math.random() * 80 - 40) + "deg";
+
+        heart.style.setProperty('--x', x + 'px');
+        heart.style.setProperty('--y', y + 'px');
+        heart.style.setProperty('--dx', dx);
+        heart.style.setProperty('--r', r);
+
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1400);
+      }
+
+      // little sparkles too
+      for (let i = 0; i < 18; i++) {
+        const s = document.createElement('div');
+        s.className = 'spark';
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        const dx = (Math.random() * 220 - 110) + "px";
+        const dy = (Math.random() * 220 - 110) + "px";
+        s.style.setProperty('--x', x + 'px');
+        s.style.setProperty('--y', y + 'px');
+        s.style.setProperty('--dx', dx);
+        s.style.setProperty('--dy', dy);
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 900);
+      }
+    }
+
+    yesBtn.addEventListener('click', () => {
+      const when = whenInput.value ? new Date(whenInput.value) : null;
+      const whenText = when ? `\nWhen: ${when.toLocaleString()}` : '';
+      result.textContent = `Best decision ever 💖${whenText}`;
+      spawnHeartsBurst();
+
+      // disable buttons after yes for a clean “final state”
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+      yesBtn.style.opacity = 0.9;
+      noBtn.style.opacity = 0.5;
+      noBtn.style.cursor = 'default';
+    });
+
+    // --- NO behavior (dodges attempts) ---
+    let noInitialized = false;
+    let dodgeCount = 0;
+
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+    function initNoAbsolutePosition() {
+      if (noInitialized) return;
+
+      // lock it into absolute positioning within the btnrow area
+      const rowRect = btnrow.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = (btnRect.left - rowRect.left) + 'px';
+      noBtn.style.top = (btnRect.top - rowRect.top) + 'px';
+
+      // give the row enough height for movement
+      btnrow.style.height = Math.max(80, rowRect.height) + 'px';
+
+      noInitialized = true;
+    }
+
+    function moveNoButtonAway(pointerEvent) {
+      if (noBtn.disabled) return;
+
+      initNoAbsolutePosition();
+      dodgeCount++;
+
+      const rowRect = btnrow.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      // Make it progressively more chaotic
+      const padding = 8;
+      const maxX = rowRect.width - btnRect.width - padding;
+      const maxY = rowRect.height - btnRect.height - padding;
+
+      // If the container is too small (mobile), expand it a bit
+      if (maxX < 40 || maxY < 10) {
+        btnrow.style.height = (rowRect.height + 60) + 'px';
+      }
+
+      const speedBoost = clamp(1 + dodgeCount * 0.07, 1, 2.2);
+
+      // Prefer moving away from the pointer if we have one
+      let targetX = Math.random() * maxX;
+      let targetY = Math.random() * maxY;
+
+      if (pointerEvent) {
+        const px = pointerEvent.clientX;
+        const py = pointerEvent.clientY;
+        const currentCenterX = btnRect.left + btnRect.width / 2;
+        const currentCenterY = btnRect.top + btnRect.height / 2;
+
+        const awayX = (currentCenterX - px) * 0.8;
+        const awayY = (currentCenterY - py) * 0.8;
+
+        const currentLeft = parseFloat(noBtn.style.left) || 0;
+        const currentTop  = parseFloat(noBtn.style.top) || 0;
+
+        targetX = clamp(currentLeft + awayX * speedBoost, padding, maxX);
+        targetY = clamp(currentTop  + awayY * speedBoost, padding, maxY);
+      }
+
+      noBtn.style.transition = `left ${140 / speedBoost}ms ease, top ${140 / speedBoost}ms ease`;
+      noBtn.style.left = targetX + 'px';
+      noBtn.style.top  = targetY + 'px';
+    }
+
+    // Trigger on hover, focus, and touch attempts
+    noBtn.addEventListener('mouseenter', (e) => moveNoButtonAway(e));
+    noBtn.addEventListener('focus', (e) => moveNoButtonAway(e));
+    noBtn.addEventListener('pointerdown', (e) => {
+      // prevent accidental click on mobile
+      e.preventDefault();
+      moveNoButtonAway(e);
+    });
+
+    // If someone somehow clicks it, still dodge
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      moveNoButtonAway(e);
+    });
+  </script>
+</body>
+</html>
