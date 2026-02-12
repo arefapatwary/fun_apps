@@ -2,103 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Valentine Typhoon?</title>
   <style>
-    :root { --bg1:#ffeff6; --bg2:#ffe3ef; --card:#ffffffcc; --text:#1f1f1f; }
+    :root {
+      --bg1:#ffeff6; --bg2:#ffe3ef; --card:#ffffffcc; --text:#1f1f1f;
+      --pink:#ff2f74; --pink2:#ff4d8d;
+    }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100svh;
-      display: grid;
-      place-items: center;
+    body{
+      margin:0;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      background: radial-gradient(1200px 700px at 20% 10%, var(--bg2), transparent 60%),
-                  radial-gradient(1000px 650px at 80% 90%, #ffd1e7, transparent 55%),
-                  linear-gradient(135deg, var(--bg1), #fff);
-      overflow: hidden;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, var(--bg2), transparent 60%),
+        radial-gradient(1000px 650px at 80% 90%, #ffd1e7, transparent 55%),
+        linear-gradient(135deg, var(--bg1), #fff);
+      overflow:hidden;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
     }
 
-    .card {
-      width: min(520px, 92vw);
-      padding: 28px 22px;
-      background: var(--card);
-      border: 1px solid #ffd0e3;
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.08);
-      text-align: center;
+    .card{
+      width:min(520px, 94vw);
+      padding: 26px 18px 22px;
+      background:var(--card);
+      border:1px solid #ffd0e3;
+      border-radius:18px;
+      box-shadow:0 12px 30px rgba(0,0,0,.08);
+      text-align:center;
       backdrop-filter: blur(8px);
-      position: relative;
+      position:relative;
+      z-index: 1;
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(22px, 4.2vw, 30px);
-      line-height: 1.15;
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(22px, 5.4vw, 32px);
+      line-height:1.15;
+    }
+    .sub{
+      margin:0 0 18px;
+      opacity:.82;
+      font-size:14px;
     }
 
-    .sub {
-      margin: 0 0 16px;
-      opacity: .8;
-      font-size: 14px;
-    }
-
-    .when {
-      display: grid;
-      gap: 10px;
-      margin: 14px 0 18px;
-      justify-items: center;
-    }
-    .when label { font-size: 13px; opacity: .85; }
-    input[type="datetime-local"]{
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid #f3b6cf;
-      outline: none;
-      width: min(320px, 80vw);
-      font-size: 14px;
-      background: #fff;
-    }
-
-    .btnrow {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
+    .btnrow{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
       margin-top: 8px;
-      position: relative;
-      min-height: 72px;
     }
 
-    button {
-      border: 0;
-      padding: 12px 18px;
+    button{
+      border:0;
+      padding: 14px 18px;
       border-radius: 999px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
-      transition: transform .08s ease, box-shadow .12s ease, opacity .12s ease;
-      user-select: none;
+      user-select:none;
       touch-action: manipulation;
+      font-size: 16px;
+      min-width: 140px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.08);
+      transition: transform .08s ease, opacity .12s ease, box-shadow .12s ease;
     }
-    button:active { transform: scale(.98); }
+    button:active{ transform: scale(.98); }
 
-    #yesBtn {
-      background: linear-gradient(180deg, #ff4d8d, #ff2f74);
-      color: white;
-      box-shadow: 0 10px 18px rgba(255, 47, 116, .28);
-    }
-    #yesBtn:hover { box-shadow: 0 14px 22px rgba(255, 47, 116, .35); }
-
-    #noBtn {
-      background: #ffffff;
-      color: #ff2f74;
-      border: 2px solid #ff91b8;
-      box-shadow: 0 10px 18px rgba(255, 145, 184, .18);
-      position: relative; /* becomes absolute when initialized */
+    #yesBtn{
+      background: linear-gradient(180deg, var(--pink2), var(--pink));
+      color:#fff;
+      box-shadow: 0 12px 20px rgba(255, 47, 116, .28);
     }
 
-    .result {
+    /* NO starts as normal in the row, then becomes absolute and runs around the screen */
+    #noBtn{
+      background:#fff;
+      color:var(--pink);
+      border:2px solid #ff91b8;
+      box-shadow: 0 10px 18px rgba(255,145,184,.18);
+      position: relative;
+    }
+
+    .result{
       margin-top: 16px;
       font-size: 18px;
       font-weight: 900;
@@ -106,56 +96,56 @@
       white-space: pre-line;
     }
 
-    .hint {
+    .hint{
       margin-top: 8px;
       font-size: 12px;
-      opacity: .65;
+      opacity:.65;
     }
 
-    /* Floating emojis (hearts + flowers) */
-    .pop {
+    /* Floating emojis */
+    .pop{
       position: fixed;
-      left: 0; top: 0;
-      pointer-events: none;
+      left:0; top:0;
+      pointer-events:none;
       will-change: transform, opacity;
-      font-size: 20px;
-      opacity: 0;
-      animation: floatUp 1300ms ease-out forwards;
+      font-size: 22px;
+      opacity:0;
+      animation: floatUp 1400ms ease-out forwards;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,.08));
+      z-index: 2;
+    }
+    @keyframes floatUp{
+      0% { transform: translate(var(--x), var(--y)) scale(.9) rotate(0deg); opacity:0; }
+      15%{ opacity:1; }
+      100%{ transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) - 180px)) scale(1.3) rotate(var(--r)); opacity:0; }
     }
 
-    @keyframes floatUp {
-      0%   { transform: translate(var(--x), var(--y)) scale(.9) rotate(0deg); opacity: 0; }
-      15%  { opacity: 1; }
-      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) - 160px)) scale(1.3) rotate(var(--r)); opacity: 0; }
-    }
-
-    /* Confetti sparkle dots */
-    .spark {
+    .spark{
       position: fixed;
-      pointer-events: none;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #ff4d8d;
-      opacity: 0;
-      animation: pop 750ms ease-out forwards;
+      pointer-events:none;
+      width:6px; height:6px;
+      border-radius:50%;
+      background: var(--pink2);
+      opacity:0;
+      animation: pop 800ms ease-out forwards;
+      z-index: 2;
     }
-    @keyframes pop {
-      0%   { transform: translate(var(--x), var(--y)) scale(0.6); opacity: 0; }
-      20%  { opacity: 1; }
-      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) + var(--dy))) scale(0.1); opacity: 0; }
+    @keyframes pop{
+      0% { transform: translate(var(--x), var(--y)) scale(.6); opacity:0; }
+      20%{ opacity:1; }
+      100%{ transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) + var(--dy))) scale(.1); opacity:0; }
+    }
+
+    /* Small screens: full-width buttons */
+    @media (max-width: 420px){
+      button{ min-width: 44vw; padding: 14px 14px; }
     }
   </style>
 </head>
 <body>
-  <main class="card" id="card">
+  <main class="card">
     <h1>Will you be my Valentine Typhoon? 💘</h1>
-    <p class="sub">Pick a date/time (optional), then choose wisely 🙂</p>
-
-    <div class="when">
-      <label for="whenInput">When are you free?</label>
-      <input id="whenInput" type="datetime-local" />
-    </div>
+    <p class="sub">Choose wisely 🙂</p>
 
     <div class="btnrow" id="btnrow">
       <button id="yesBtn">YES 💖</button>
@@ -163,147 +153,146 @@
     </div>
 
     <div class="result" id="result"></div>
-    <div class="hint" id="hint">Tip: the “NO” button is… extremely uncooperative.</div>
+    <div class="hint" id="hint">Tip: “NO” is a runner.</div>
   </main>
 
   <script>
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const result = document.getElementById('result');
-    const whenInput = document.getElementById('whenInput');
-    const btnrow = document.getElementById('btnrow');
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const result = document.getElementById("result");
 
-    // --- YES behavior (hearts + flowers) ---
+    // ---- YES: hearts + flowers pop ----
     function spawnLoveBurst() {
       const emojis = ["💖","💘","💗","💞","💕","❤️","🌹","🌷","💐","🌸","🌺","🪷"];
-      const pops = 30;
+      const pops = 34;
 
       for (let i = 0; i < pops; i++) {
-        const el = document.createElement('div');
-        el.className = 'pop';
+        const el = document.createElement("div");
+        el.className = "pop";
         el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
         const x = Math.random() * window.innerWidth;
         const y = Math.random() * window.innerHeight;
+        const dx = (Math.random() * 220 - 110) + "px";
+        const r  = (Math.random() * 100 - 50) + "deg";
 
-        const dx = (Math.random() * 200 - 100) + "px";
-        const r  = (Math.random() * 90 - 45) + "deg";
-
-        el.style.setProperty('--x', x + 'px');
-        el.style.setProperty('--y', y + 'px');
-        el.style.setProperty('--dx', dx);
-        el.style.setProperty('--r', r);
+        el.style.setProperty("--x", x + "px");
+        el.style.setProperty("--y", y + "px");
+        el.style.setProperty("--dx", dx);
+        el.style.setProperty("--r", r);
 
         document.body.appendChild(el);
-        setTimeout(() => el.remove(), 1500);
+        setTimeout(() => el.remove(), 1600);
       }
 
-      // sparkles
       for (let i = 0; i < 22; i++) {
-        const s = document.createElement('div');
-        s.className = 'spark';
+        const s = document.createElement("div");
+        s.className = "spark";
+
         const x = Math.random() * window.innerWidth;
         const y = Math.random() * window.innerHeight;
-        const dx = (Math.random() * 260 - 130) + "px";
-        const dy = (Math.random() * 260 - 130) + "px";
-        s.style.setProperty('--x', x + 'px');
-        s.style.setProperty('--y', y + 'px');
-        s.style.setProperty('--dx', dx);
-        s.style.setProperty('--dy', dy);
+        const dx = (Math.random() * 300 - 150) + "px";
+        const dy = (Math.random() * 300 - 150) + "px";
+
+        s.style.setProperty("--x", x + "px");
+        s.style.setProperty("--y", y + "px");
+        s.style.setProperty("--dx", dx);
+        s.style.setProperty("--dy", dy);
+
         document.body.appendChild(s);
         setTimeout(() => s.remove(), 900);
       }
     }
 
-    yesBtn.addEventListener('click', () => {
-      const when = whenInput.value ? new Date(whenInput.value) : null;
-      const whenText = when ? `\nWhen: ${when.toLocaleString()}` : '';
-      result.textContent = `Best decision ever, I love you <3${whenText}`;
+    yesBtn.addEventListener("click", () => {
+      result.textContent = "Best decision ever, I love you <3";
       spawnLoveBurst();
 
-      // lock final state
+      // final state
       yesBtn.disabled = true;
       noBtn.disabled = true;
-      yesBtn.style.opacity = 0.9;
+      yesBtn.style.opacity = 0.92;
       noBtn.style.opacity = 0.5;
-      noBtn.style.cursor = 'default';
+      noBtn.style.cursor = "default";
     });
 
-    // --- NO behavior (never clickable, teleports farther forever) ---
-    let dodgeCount = 0;
+    // ---- NO: mobile-first escape (never clickable) ----
     let noInitialized = false;
+    let dodgeCount = 0;
 
-    function clamp(n, min, max) {
-      return Math.max(min, Math.min(max, n));
-    }
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
-    function initNoAbsolutePosition() {
+    function initNoFloating() {
       if (noInitialized) return;
 
-      const rowRect = btnrow.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
+      // Put NO on the page (fixed), so it can escape anywhere
+      const rect = noBtn.getBoundingClientRect();
 
-      noBtn.style.position = 'absolute';
-      noBtn.style.left = (btnRect.left - rowRect.left) + 'px';
-      noBtn.style.top  = (btnRect.top  - rowRect.top) + 'px';
-
-      // give it more room to run
-      btnrow.style.height = Math.max(140, rowRect.height + 90) + 'px';
-
-      // make it impossible to “accidentally” click on mobile
-      noBtn.style.pointerEvents = 'auto';
+      noBtn.style.position = "fixed";
+      noBtn.style.left = rect.left + "px";
+      noBtn.style.top  = rect.top  + "px";
+      noBtn.style.zIndex = "3"; // above card
+      noBtn.style.margin = "0";
 
       noInitialized = true;
     }
 
-    function teleportNoButton() {
+    function moveNoAway(evt) {
       if (noBtn.disabled) return;
 
-      initNoAbsolutePosition();
+      initNoFloating();
       dodgeCount++;
 
-      const rowRect = btnrow.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
+      // keep it away from edges + safe areas
+      const padding = 14;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
 
-      const padding = 10;
-      const maxX = rowRect.width  - btnRect.width  - padding;
-      const maxY = rowRect.height - btnRect.height - padding;
+      // how far it jumps grows over time
+      const jump = clamp(120 + dodgeCount * 40, 120, 700);
 
-      // increase jump distance each time
-      const jump = clamp(80 + dodgeCount * 35, 80, 520);
+      // pick a target anywhere on screen
+      let x = Math.random() * (w - noBtn.offsetWidth  - padding * 2) + padding;
+      let y = Math.random() * (h - noBtn.offsetHeight - padding * 2) + padding;
 
-      // base random location
-      let x = Math.random() * maxX;
-      let y = Math.random() * maxY;
+      // if we know where the finger is, push further away from it
+      if (evt && typeof evt.clientX === "number") {
+        const px = evt.clientX;
+        const py = evt.clientY;
 
-      // add extra jump offset
-      x = clamp(x + (Math.random() * jump - jump / 2), padding, maxX);
-      y = clamp(y + (Math.random() * jump - jump / 2), padding, maxY);
+        const awayX = (x - px);
+        const awayY = (y - py);
 
-      // super quick teleport
-      noBtn.style.transition = "left 70ms linear, top 70ms linear, transform 80ms ease";
+        x = clamp(x + Math.sign(awayX) * (jump / 2), padding, w - noBtn.offsetWidth - padding);
+        y = clamp(y + Math.sign(awayY) * (jump / 2), padding, h - noBtn.offsetHeight - padding);
+      }
+
+      // fast move so a click never lands
+      noBtn.style.transition = "left 70ms linear, top 70ms linear, transform 90ms ease";
       noBtn.style.left = x + "px";
       noBtn.style.top  = y + "px";
 
-      // shrink a bit each dodge
-      const scale = clamp(1 - dodgeCount * 0.035, 0.35, 1);
+      // shrink a bit each time (makes it even harder)
+      const scale = clamp(1 - dodgeCount * 0.04, 0.35, 1);
       noBtn.style.transform = `scale(${scale})`;
     }
 
-    // The key trick: move BEFORE a click can happen
-    noBtn.addEventListener("mouseenter", teleportNoButton);
-    noBtn.addEventListener("focus", teleportNoButton);
+    // Make it run BEFORE a click can happen on mobile/desktop
+    noBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); moveNoAway(e); });
+    noBtn.addEventListener("pointerenter", (e) => moveNoAway(e));
+    noBtn.addEventListener("mouseenter", (e) => moveNoAway(e));
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); moveNoAway(e); });
 
-    // pointerdown fires before click (mobile + desktop)
-    noBtn.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
-      teleportNoButton();
-    });
-
-    // just in case: also prevent clicks
-    noBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      teleportNoButton();
+    // Also: if they chase it, it keeps remembering to run
+    window.addEventListener("resize", () => {
+      if (!noInitialized || noBtn.disabled) return;
+      // nudge it back onto screen if needed after rotation/resizing
+      const padding = 14;
+      const w = window.innerWidth, h = window.innerHeight;
+      const left = parseFloat(noBtn.style.left) || 0;
+      const top  = parseFloat(noBtn.style.top)  || 0;
+      noBtn.style.left = clamp(left, padding, w - noBtn.offsetWidth - padding) + "px";
+      noBtn.style.top  = clamp(top,  padding, h - noBtn.offsetHeight - padding) + "px";
     });
   </script>
 </body>
